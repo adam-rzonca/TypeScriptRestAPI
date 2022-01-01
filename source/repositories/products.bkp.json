@@ -1,0 +1,25 @@
+[	{
+		"id": 1,
+		"name": "Product 1",
+		"price": 11.11,
+		"updateDate": "2021-12-01T18:25:43.511Z"
+	},
+	{
+		"id": 2,
+		"name": "Product 2",
+		"price": 12.22,
+		"updateDate": "2021-12-01T18:25:43.511Z"
+	},
+	{
+		"id": 3,
+		"name": "Product 3",
+		"price": 13.33,
+		"updateDate": "2021-12-01T18:25:43.511Z"
+	},
+	{
+		"id": 4,
+		"name": "Product 4",
+		"price": 14.44,
+		"updateDate": "2021-12-01T18:25:43.511Z"
+	}
+]
