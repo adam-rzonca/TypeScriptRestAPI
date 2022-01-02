@@ -1,11 +1,16 @@
-import { ServiceResponse } from "../services/serviceResponse";
+import {
+  ServiceResponse,
+  productNotFoundResponse,
+  productInitialResponse,
+} from "../services/serviceResponse";
+import { Product } from "../repositories/entities";
 import database from "../repositories/productsDatabase";
 
-const getAll = async () => {
-  const response: ServiceResponse = { statusCode: 400, data: {} };
+const getAll = async (): Promise<ServiceResponse> => {
+  const response: ServiceResponse = productInitialResponse;
 
   try {
-    const products = await database.getAll();
+    const products: Product[] = await database.getAll();
     response.statusCode = 200;
     response.data = products;
   } catch (error) {
@@ -16,18 +21,17 @@ const getAll = async () => {
   return response;
 };
 
-const getById = async (id: any) => {
-  const response: ServiceResponse = { statusCode: 400, data: {} };
+const getById = async (id: string): Promise<ServiceResponse> => {
+  let response: ServiceResponse = productInitialResponse;
 
   try {
-    const product = await database.getById(id);
+    const product: Product | undefined = await database.getById(id);
 
     if (product) {
       response.statusCode = 200;
       response.data = product;
     } else {
-      response.statusCode = 404;
-      response.data = { error: "Product not found" };
+      response = productNotFoundResponse;
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -38,11 +42,11 @@ const getById = async (id: any) => {
   return response;
 };
 
-const create = async (data: any) => {
-  const response: ServiceResponse = { statusCode: 400, data: {} };
+const create = async (data: any): Promise<ServiceResponse> => {
+  const response: ServiceResponse = productInitialResponse;
 
   try {
-    const product = await database.create(data);
+    const product: Product | undefined = await database.create(data);
 
     if (product) {
       response.statusCode = 201;
@@ -57,18 +61,17 @@ const create = async (data: any) => {
   return response;
 };
 
-const update = async (data: any) => {
-  const response: ServiceResponse = { statusCode: 400, data: {} };
+const update = async (id: string, data: any): Promise<ServiceResponse> => {
+  let response: ServiceResponse = productInitialResponse;
 
   try {
-    const product = await database.update(data);
+    const product: Product | undefined = await database.update(id, data);
 
     if (product) {
       response.statusCode = 200;
       response.data = product;
     } else {
-      response.statusCode = 404;
-      response.data = { error: "Product not found" };
+      response = productNotFoundResponse;
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -79,12 +82,18 @@ const update = async (data: any) => {
   return response;
 };
 
-const remove = async (id: any) => {
-  const response: ServiceResponse = { statusCode: 400, data: {} };
+const remove = async (id: string): Promise<ServiceResponse> => {
+  let response: ServiceResponse = productInitialResponse;
 
   try {
-    await database.remove(id);
-    response.statusCode = 204;
+    const product: Product | undefined = await database.getById(id);
+
+    if (!product) {
+      response = productNotFoundResponse;
+    } else {
+      await database.remove(id);
+      response.statusCode = 204;
+    }
   } catch (error) {
     if (error instanceof Error) {
       response.data = { error: error.message };
